@@ -16,8 +16,6 @@ class Post(BaseModel):
     content: str
     published: bool = True
 
-
-
 host = 'localhost'
 database ='fastAPI'
 user = 'postgres'
