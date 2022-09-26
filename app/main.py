@@ -80,7 +80,7 @@ def get_post(id: str):
 
 @app.delete("/posts/{id}", status_code=204)
 def delete_post(id: int):
-    cursor.execute("""DELETED FROM posts WHERE id = %s RETURNING *""", (str(id),))
+    cursor.execute("""DELETE FROM posts WHERE id = %s RETURNING *""", (str(id),))
     post = cursor.fetchone()
     conn.commit()
     if post:
@@ -93,9 +93,12 @@ def delete_post(id: int):
 
 @app.put("/posts/{id}")
 def update_post(id: int, post: Post):
-    if id in my_posts:
-        my_posts[id] = post.dict()
-        return {"Updated"}
+    cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""", (post.title, post.content, post.published, str(id)))
+
+    updatePost = cursor.fetchone()
+    conn.commit()
+    if updatePost:
+        return {"Updated": updatePost}
     else:
         raise HTTPException(
             status_code=404, detail=f"post with id: {id} was not found")
