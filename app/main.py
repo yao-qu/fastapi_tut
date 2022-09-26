@@ -1,12 +1,13 @@
-import imp
 from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.params import Body
 
 from pydantic import BaseModel
 from typing import Optional
 from random import randrange
-
+import time
 import psycopg2
+from psycopg2.extras import RealDictCursor
+
 app = FastAPI()
 
 
@@ -14,11 +15,22 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = True
-    rating: Optional[int] = None
 
 
 
-
+host = 'localhost'
+database ='fastAPI'
+user = 'postgres'
+password = 'bear'
+while True:
+    try:
+        conn = psycopg2.connect(host = host, database=database, user=user, password=password, cursor_factory=RealDictCursor)
+        cursor = conn.cursor()
+        print("DB connected!")
+        break
+    except Exception as error:
+        print("Connection failed", error)
+        time.sleep(5)
 
 
 my_posts = {1: {'title': 'top beaches in florida',
@@ -32,18 +44,20 @@ async def root():
 
 @app.get("/posts")
 def get_posts():
-    return {"data:": my_posts}
+    cursor.execute("""SELECT * FROM posts""")
+    posts = cursor.fetchall()
+    return {"data:": posts}
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 async def create_posts(payLoad: Post):
-    post_dict = payLoad.dict()
-    ID = randrange(0, 1000)
-    print(ID)
-    my_posts[ID] = post_dict
-    print(my_posts)
-    return {"data received": ID}
-
+    # DO NOT USE FORMAT STRING, SECURITY ISSUE
+    # USE %S TO SANITISE THE STATEMENTS
+    cursor.execute("""INSERT INTO posts(title, content, published) VALUES (%s, %s, %s) RETURNING * """, (payLoad.title, payLoad.content, payLoad.published))
+    new_post = cursor.fetchone()
+    # NEED TO COMMIT
+    conn.commit()
+    return {"Post created": new_post}
 
 def find_post(id):
     if id in my_posts:
@@ -57,20 +71,19 @@ def get_latest_post():
 # conver id to string as it is auto converted to str
 @app.get("/posts/{id}")
 def get_post(id: str):
-    post = find_post(id)
-
+    cursor.execute("""SELECT * FROM posts WHERE id = %s""", (str(id),))
+    post = cursor.fetchone()
     if not post:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"post with id: {id} was not found")
-    return {"post_details": f"{post}"}
+        raise HTTPException(status_code=404, detail=f"post with id: {id} not found!")
+    return {"post detail": post}
 
 
 @app.delete("/posts/{id}", status_code=204)
 def delete_post(id: int):
-    if id in my_posts:
-        del my_posts[id]
-        print("deleted", my_posts)
-
+    cursor.execute("""DELETED FROM posts WHERE id = %s RETURNING *""", (str(id),))
+    post = cursor.fetchone()
+    conn.commit()
+    if post:
         return Response(status_code=204)
 
     else:
