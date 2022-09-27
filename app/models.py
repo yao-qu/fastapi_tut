@@ -16,3 +16,12 @@ class Post(Base):
 
     def __repr__(self):
         return f"Item title: {self.title}, published: {self.published}"
+
+
+class User(Base):
+    __tablename__ = 'all_users'
+    id = Column(Integer, primary_key=True, nullable=False)
+    email = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text('NOW()'))
