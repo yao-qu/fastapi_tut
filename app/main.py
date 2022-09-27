@@ -7,17 +7,11 @@ import models
 from database import engine, get_db, SessionLocal
 from sqlalchemy.orm import Session
 import sys
-
+import schemas
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # DEPENDENCY
-
-
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool = True
 
 
 # host = 'localhost'
@@ -36,12 +30,6 @@ class Post(BaseModel):
 #         time.sleep(5)
 
 
-@app.get("/sqlal")
-def test_post(db: Session = Depends(get_db)):
-    p = db.query(models.Post).all()
-    return {"Done": p}
-
-
 @app.get("/")
 async def root():
     return {"message": "Welcome to API 2"}
@@ -57,7 +45,7 @@ def get_posts(db: Session = Depends(get_db)):
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-async def create_posts(payLoad: Post, db: Session = Depends(get_db)):
+async def create_posts(payLoad: schemas.CreatePost, db: Session = Depends(get_db)):
     # DO NOT USE FORMAT STRING, SECURITY ISSUE
     # USE %S TO SANITISE THE STATEMENTS
     # cursor.execute("""INSERT INTO posts(title, content, published) VALUES (%s, %s, %s) RETURNING * """,
@@ -119,7 +107,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 
 
 @app.put("/posts/{id}")
-def update_post(id: int, post: Post, db: Session = Depends(get_db)):
+def update_post(id: int, post: schemas.UpdatePost, db: Session = Depends(get_db)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
     #                (post.title, post.content, post.published, str(id)))
 
