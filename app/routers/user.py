@@ -30,5 +30,5 @@ def get_user(id: int, db: Session = Depends(get_db)):
     u = db.query(models.User).filter(models.User.id == id).first()
     if not u:
         raise HTTPException(
-            status_code=404, detail=f"post with id: {id} was not found")
+            status_code=404, detail=f"user with id: {id} was not found")
     return u

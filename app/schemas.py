@@ -12,6 +12,7 @@ class PostBase(BaseModel):
 
 
 class CreatePost(PostBase):
+ 
     pass
 
 
@@ -20,10 +21,23 @@ class UpdatePost(BaseModel):
     content: str
     published: bool
 
+class UserResponse(BaseModel):
+    email: EmailStr
+    created_at: datetime
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+
 
 class PostResponse(UpdatePost):
-
+    id: int
     created_at: datetime
+    owner_id: int
+## return pydantic model UserResponse    
+    owner: UserResponse
 
     class Config:
         orm_mode = True
@@ -32,15 +46,6 @@ class PostResponse(UpdatePost):
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
-    # created_at: datetime
-
-
-class UserResponse(BaseModel):
-    email: EmailStr
-    created_at: datetime
-
-    class Config:
-        orm_mode = True
 
 
 class UserLogin(BaseModel):

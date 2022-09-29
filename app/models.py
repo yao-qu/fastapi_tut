@@ -13,7 +13,9 @@ class Post(Base):
     published = Column(Boolean, nullable=False, server_default='False')
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('NOW()'))
-
+    owner_id = Column(Integer, ForeignKey('all_users.id', ondelete="CASCADE"), nullable=False)
+## referencing the class not the table
+    owner = relationship("User")
     def __repr__(self):
         return f"Item title: {self.title}, published: {self.published}"
 
