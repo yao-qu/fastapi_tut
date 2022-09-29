@@ -1,7 +1,9 @@
+import sys
+sys.path.append("..")
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy import create_engine
-
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:bear@localhost/fastAPI_tut"
+from config import settings
+SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.database_username}:{settings.database_password}@{settings.database_hostname}:{settings.database_port}/{settings.database_name}"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
