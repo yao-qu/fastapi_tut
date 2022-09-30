@@ -1,11 +1,25 @@
-from fastapi import FastAPI, Response, status, HTTPException, Depends
-import models
-from database import engine
-from routers import post, user, auth, vote
 from config import settings
+from fastapi.middleware.cors import CORSMiddleware
+from routers import post, user, auth, vote
+from database import engine
+import models
+from fastapi import FastAPI, Response, status, HTTPException, Depends
+import sys
+sys.path.append("..")
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+origins = ['*']
+# fetch(‘http://localhost:8000/').then(res => res.json()).then(console.log)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")

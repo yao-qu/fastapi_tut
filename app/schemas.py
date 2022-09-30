@@ -41,6 +41,7 @@ class PostResponse(UpdatePost):
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+    phone_number: str
 
 
 class UserLogin(BaseModel):

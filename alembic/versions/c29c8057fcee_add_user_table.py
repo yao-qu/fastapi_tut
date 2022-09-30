@@ -1,0 +1,33 @@
+"""add user table
+
+Revision ID: c29c8057fcee
+Revises: d3461411c7f4
+Create Date: 2022-09-30 20:08:19.192666
+
+"""
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision = 'c29c8057fcee'
+down_revision = 'd3461411c7f4'
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    op.create_table('users',
+                    sa.Column('id', sa.Integer(), nullable=False),
+                    sa.Column('email', sa.String(), nullable=False),
+                    sa.Column('password', sa.String(), nullable=False),
+                    sa.Column('created_at', sa.TIMESTAMP(timezone=True),
+                              server_default=sa.text('NOW()'), nullable=False),
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.UniqueConstraint('email')
+                    )
+
+
+def downgrade() -> None:
+    op.drop_table('users')
+    pass
