@@ -1,5 +1,0 @@
-{'title': 'top beaches in florida', 'content': 'check out1111...', 'published': True, 'rating': None}
-{'title': 'top beaches in florida', 'content': 'check out1111...', 'published': True, 'rating': None}
-{'title': 'top beaches in florida', 'content': 'check out1111...', 'published': True, 'rating': None}
-{'title': 'top beaches in florida', 'content': 'check out1111...', 'published': True, 'rating': None}
-{'title': 'top beaches in florida', 'content': 'check out1111...', 'published': True, 'rating': None}
