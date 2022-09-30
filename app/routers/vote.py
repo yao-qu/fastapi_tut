@@ -15,7 +15,10 @@ router = APIRouter(prefix="/vote", tags=['votes'])
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def votes(vote: schemas.Vote, db: Session = Depends(get_db), current_user: int = Depends(oauth2.get_current_user)):
-
+    post = db.query(models.Post).filter(models.Post.id == vote.post_id).first()
+    if not post:
+        print("Post not found")
+        raise HTTPException(status_code=404, detail="Post does not exist")
     vote_query = db.query(models.Vote).filter(
         models.Vote.post_id == vote.post_id, models.Vote.user_id == current_user.id)
     found_vote = vote_query.first()
@@ -29,7 +32,7 @@ def votes(vote: schemas.Vote, db: Session = Depends(get_db), current_user: int =
         return {"Successfully votes"}
     else:
         if not found_vote:
-            raise HTTPException(status_code=404, detail="Post does not exist")
+            raise HTTPException(status_code=404, detail="Vote does not exist")
         vote_query.delete(synchronize_session=False)
         db.commit()
         return {"Vote removed"}

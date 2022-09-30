@@ -12,11 +12,6 @@ class PostBase(BaseModel):
     published: bool = True
 
 
-class CreatePost(PostBase):
-
-    pass
-
-
 class UpdatePost(BaseModel):
     title: str
     content: str
@@ -65,3 +60,11 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     post_id: int
     dir: conint(le=1)
+
+
+class PostVoteResponse(BaseModel):
+    Post: PostResponse
+    votes: int
+
+    class Config:
+        orm_mode = True
