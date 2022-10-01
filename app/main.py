@@ -1,12 +1,11 @@
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import post, user, auth, vote
-from database import engine
-import models
-from fastapi import FastAPI, Response, status, HTTPException, Depends
-import sys
-sys.path.append("..")
 
-from config import settings
+from . import models
+from .database import engine
+from .routers import post, user, auth, vote
+from .config import settings
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()

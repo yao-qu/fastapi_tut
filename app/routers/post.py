@@ -1,13 +1,11 @@
-import oauth2
-import schemas
-import models
-from typing import List, Optional
-from database import get_db
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from sqlalchemy import func
 from sqlalchemy.orm import Session
-import sys
-sys.path.append("..")
+from typing import List, Optional
+
+from sqlalchemy import func
+# from sqlalchemy.sql.functions import func
+from .. import models, schemas, oauth2
+from ..database import get_db
 
 router = APIRouter(prefix="/posts", tags=['posts'])
 
