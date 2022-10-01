@@ -24,7 +24,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to API 2"}
+    return {"Sample API"}
 
 app.include_router(post.router)
 app.include_router(user.router)
